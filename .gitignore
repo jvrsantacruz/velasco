@@ -1,2 +1,6 @@
 *.xlsx
+*.xlsx#
 *.xls
+*.log
+*.pdf
+*.tex
