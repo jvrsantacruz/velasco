@@ -1,0 +1,9 @@
+numpy
+pandas
+seaborn
+matplotlib
+ipython
+scrapy
+xlrd
+openpyxl
+unidecode
