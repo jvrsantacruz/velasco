@@ -1,0 +1,12 @@
+1. Identificación: Cuadraditos con el orden del 1 inventario
+1. Identificación marcado: Libro por id
+2. Fantasmas: Cuadraditos con colores:
+    * id total:  < 166 + existe
+    * id hist:  < 166 + no existe
+    * fantasmas: > 166
+3. Otras maneras:
+    Distribución: Cuadraditos por tema
+    Distribución: Cuadraditos por idioma
+4. Orden:
+    Orden-orden: Primero y segundo
+    Orden-orden: Tercero y cuarto
