@@ -199,7 +199,7 @@ def write(data, path=None, **kwargs):
 
     :param data: List of dicts to dump
     :param path: Path of the file to write
-    :param keys: Lis of headers to get from data (optional)
+    :param header: Lis of headers to get from data (optional)
     """
     ext = format_name(kwargs.pop('format', None) or detect_format(path))
     return dict(

@@ -23,13 +23,13 @@ class CatalogoSpider(scrapy.Spider):
 
     def search(self, response):
         for entry in self.meta:
-            ref = entry.get('ref')
-            if not ref:
+            if not entry['ref']:
                 continue
 
-            ref = str(ref)
-            if ref.isdigit():
-                ref = 'MSS/' + ref
+            try:
+                ref = 'MSS/' + str(int(entry['ref']))
+            except ValueError:
+                ref = str(entry['ref'])
 
             yield scrapy.FormRequest.from_response(
                 response,
@@ -40,7 +40,7 @@ class CatalogoSpider(scrapy.Spider):
             )
 
     def search_result_or_record(self, response):
-        if list(response.css('.itemlisting')):
+        if list(response.css('ul.hit_list')):
             return self.search_results(response)
 
         if list(response.css('.viewmarctags')):
