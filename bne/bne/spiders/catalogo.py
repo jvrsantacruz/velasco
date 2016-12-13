@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import scrapy
+from slugify import slugify
 
 import velasco.parsing
 
@@ -57,13 +58,25 @@ class CatalogoSpider(scrapy.Spider):
                               callback=self.search_result_or_record)
 
     def record(self, response):
-        data = {clean(totext(th)): clean(totext(td))
-                for th, td in pairs(response.css('.viewmarctags'))}
+        data = multidict(
+            (slugify(clean(totext(th)), only_ascii=True), clean(totext(td)))
+            for th, td in pairs(response.css('.viewmarctags'))
+        )
         data.update(response.request.meta['extra'])
         return data
 
     def url(self, *pieces):
         return urljoin('http://' + self.allowed_domains[0], *pieces)
+
+
+def multidict(items):
+    data = {}
+    for key, value in items:
+        if key in data:
+            data[key] += ';' + value
+        else:
+            data[key] = value
+    return data
 
 
 def urljoin(*pieces):

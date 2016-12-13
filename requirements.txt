@@ -7,3 +7,4 @@ scrapy
 xlrd
 openpyxl
 unidecode
+unicode-slugify
