@@ -22,9 +22,11 @@ def main():
     books = merge(list(left), list(right), key='id')
     books = add_height_and_width(books)
     books = add_volume(books)
+    books = add_material(books)
 
     header = ('id', 'title', 'lid', 'pos', 'topic', 'lang', 'ref_old', 'ref',
-              'inc', 'bb', 'exists', 'height', 'width', 'area', 'vol')
+              'inc', 'bb', 'exists', 'height', 'width', 'area', 'vol',
+              'material')
     write(list(books), args.output, header=header)
 
     # tamaño
@@ -53,6 +55,7 @@ def main():
     # titulo
     # titulo lomo
 
+
 def add_height_and_width(books):
     """parse "19 x 20 cm" within descriptions"""
     size_regex = re.compile('(\d+)\s*x\s*(\d+)\s*cm')
@@ -77,6 +80,16 @@ def add_volume(books):
             if match:
                 book['vol'] = int(match.group(1))
 
+        yield book
+
+
+def add_material(books):
+    for book in books:
+        book['material'] = ','.join(
+            m.replace('.', '')
+            for m in ('perg.', 'vitela', 'papel')
+            if m in (book['descripcion-fisica'] or '')
+        )
         yield book
 
 
