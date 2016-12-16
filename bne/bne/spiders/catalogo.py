@@ -21,7 +21,6 @@ class CatalogoSpider(scrapy.Spider):
         url = self.url(path)
         yield scrapy.Request(url=url, callback=self.search)
 
-
     def search(self, response):
         for entry in self.meta:
             if not entry['ref']:
@@ -58,10 +57,19 @@ class CatalogoSpider(scrapy.Spider):
                               callback=self.search_result_or_record)
 
     def record(self, response):
+        definition_list = pairs(response.css('.viewmarctags'))
         data = multidict(
             (slugify(clean(totext(th)), only_ascii=True), clean(totext(td)))
-            for th, td in pairs(response.css('.viewmarctags'))
+            for th, td in definition_list
         )
+
+        holdings_th = response.css('table th.holdingsheader')
+        holdings_td = pairs(response.css('table td.holdingslist'), n=len(holdings_th))
+
+        holdings_header = [slugify(clean(totext(th)), only_ascii=True) for th in holdings_th]
+        holdings_table = [[clean(totext(e)) for e in td] for td in holdings_td]
+        data['holdings'] = [dict(zip(holdings_header, entry)) for entry in holdings_table]
+
         data.update(response.request.meta['extra'])
         return data
 
@@ -91,7 +99,5 @@ def totext(e):
     return e.root.xpath('string()').strip()
 
 
-def pairs(sequence):
-    seq = iter(sequence)
-    while seq:
-        yield next(seq), next(seq)
+def pairs(sequence, n=2):
+    return zip(*[iter(sequence)] * n)
