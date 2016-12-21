@@ -25,24 +25,24 @@ def main():
     books = add_volumes(books)
     books = add_material(books)
     books = add_columns(books)
+    books = add_lines(books)
 
     header = ('id', 'lid', 'pos', 'title', 'author', 'topic', 'lang',
               'ref_old', 'ref', 'inc', 'bb', 'exists', 'height', 'width',
-              'area', 'vol', 'vols', 'material')
+              'area', 'vol', 'vols', 'material', 'lines')
     write(list(books), args.output, header=header)
 
     # tamaño
     # volumen
     # material
     # volumenes
+    # lineas
 
     # autor secundario
     # autor principal
     # desc fisica
     # hojas
     # columnas
-    # lineas
-    # material
     # enlace
     # incipit
     # autor-person
@@ -104,6 +104,22 @@ def add_material(books):
             for m in ('perg.', 'vitela', 'papel')
             if m in (book['descripcion-fisica'] or '')
         )
+        yield book
+
+
+def add_lines(books):
+    regex = re.compile('(\d+) lín\.')
+    for book in books:
+        desc = book['descripcion-fisica']
+        if desc:
+            matches = regex.findall(desc)
+            if matches:
+                book['lines'] = int(matches[0])
+            elif 'lín. var.' in desc:
+                book['lines'] = 'var'
+            else:
+                book['lines'] = ''
+
         yield book
 
 
