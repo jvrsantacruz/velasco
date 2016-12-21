@@ -22,20 +22,21 @@ def main():
     books = merge(list(left), list(right), key='id')
     books = add_height_and_width(books)
     books = add_volume(books)
+    books = add_volumes(books)
     books = add_material(books)
 
-    header = ('id', 'title', 'lid', 'pos', 'topic', 'lang', 'ref_old', 'ref',
-              'inc', 'bb', 'exists', 'height', 'width', 'area', 'vol',
-              'material')
+    header = ('id', 'lid', 'pos', 'title', 'author', 'topic', 'lang',
+              'ref_old', 'ref', 'inc', 'bb', 'exists', 'height', 'width',
+              'area', 'vols')
     write(list(books), args.output, header=header)
 
     # tamaño
     # volumen
+    # volumenes
 
     # autor secundario
     # autor principal
     # desc fisica
-    # volumenes
     # hojas
     # columnas
     # lineas
@@ -67,6 +68,17 @@ def add_height_and_width(books):
             book['width'] = int(result[0][1])
             book['area'] = book['height'] * book['width']
 
+        yield book
+
+
+def add_volumes(books):
+    """Find wether the reference is series"""
+    regex = re.compile(r'.* V.(\d+)$', re.IGNORECASE)
+    for book in books:
+        holdings = book.get('holdings') or ()
+        matches = (regex.match(h['codigo-de-barras']) for h in holdings)
+        vols = [int(match.group(1)) for match in matches if match]
+        book['vols'] = max(vols or [1])
         yield book
 
 
