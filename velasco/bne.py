@@ -24,14 +24,16 @@ def main():
     books = add_volume(books)
     books = add_volumes(books)
     books = add_material(books)
+    books = add_columns(books)
 
     header = ('id', 'lid', 'pos', 'title', 'author', 'topic', 'lang',
               'ref_old', 'ref', 'inc', 'bb', 'exists', 'height', 'width',
-              'area', 'vols')
+              'area', 'vol', 'vols', 'material')
     write(list(books), args.output, header=header)
 
     # tamaño
     # volumen
+    # material
     # volumenes
 
     # autor secundario
