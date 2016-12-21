@@ -26,10 +26,11 @@ def main():
     books = add_material(books)
     books = add_columns(books)
     books = add_lines(books)
+    books = add_author(books)
 
     header = ('id', 'lid', 'pos', 'title', 'author', 'topic', 'lang',
               'ref_old', 'ref', 'inc', 'bb', 'exists', 'height', 'width',
-              'area', 'vol', 'vols', 'material', 'lines')
+              'area', 'vol', 'vols', 'material', 'columns', 'lines')
     write(list(books), args.output, header=header)
 
     # tamaño
@@ -37,15 +38,15 @@ def main():
     # material
     # volumenes
     # lineas
+    # columnas
+    # autor
 
-    # autor secundario
+    # referencia precisa
     # autor principal
     # desc fisica
     # hojas
-    # columnas
     # enlace
     # incipit
-    # autor-person
     # area descripcion fis
     # lengua
     # procedencia
@@ -53,7 +54,6 @@ def main():
     # nota ilust
     # nota area publ (procedencia)
     # publicaciones
-    # referencia precisa
     # termino genero
     # titulo
     # titulo lomo
@@ -85,14 +85,18 @@ def add_volumes(books):
 
 
 def add_volume(books):
-    """Find wether the reference is a volume of a series"""
-    regex = re.compile('.* V.(\d+)$')
+    """Find out which volume of the series the book is"""
+    regex = re.compile(r'.* V.(\d+)$')
     for book in books:
         book['vol'] = 1
-        for holding in book['holdings'] or ():
-            match = regex.match(holding['codigo-de-barras'])
-            if match:
-                book['vol'] = int(match.group(1))
+        if book['ref']:
+            regex = re.compile(r'{} V.(\d+)$'.format(book['ref']),
+                               re.IGNORECASE)
+            holdings = book.get('holdings') or ()
+            matches = [regex.match(h['codigo-de-barras']) for h in holdings]
+            numbers = [int(match.group(1)) for match in matches if match]
+            if numbers:
+                book['vol'] = numbers[0]
 
         yield book
 
@@ -104,6 +108,16 @@ def add_material(books):
             for m in ('perg.', 'vitela', 'papel')
             if m in (book['descripcion-fisica'] or '')
         )
+        yield book
+
+
+def add_columns(books):
+    regex = re.compile('(\d+) col\.')
+    for book in books:
+        book['columns'] = ''
+        matches = regex.findall(book['descripcion-fisica'] or '')
+        if matches:
+            book['columns'] = int(matches[0])
         yield book
 
 
@@ -120,6 +134,12 @@ def add_lines(books):
             else:
                 book['lines'] = ''
 
+        yield book
+
+
+def add_author(books):
+    for book in books:
+        book['author'] = book.get('autor-personal') or ''
         yield book
 
 
