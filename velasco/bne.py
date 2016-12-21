@@ -4,17 +4,11 @@ import argparse
 from velasco.parsing import read, write, merge
 
 
-def update_id(records):
-    for entry in records:
-        entry['bid'] = int(entry['bid'])
-    return records
-
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('meta')
     parser.add_argument('bne')
-    parser.add_argument('--output')
+    parser.add_argument('-o', '--output')
     args = parser.parse_args()
 
     left = read(args.meta, types={'id': int})
