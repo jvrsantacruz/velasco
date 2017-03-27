@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 
 setup(
-    name='cases',
+    name='velasco',
     version='0.1',
     author='Javier Santacruz',
     author_email='javier.santacruz@avature.net',
