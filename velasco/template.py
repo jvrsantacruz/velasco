@@ -1,11 +1,21 @@
 # -*- coding: utf-8 -*-
+"""Genera documento vacío que sirve como plantilla para los metadatos"""
 import sys
 import argparse
 
-from parsing import Book, parse_mentions
+from parsing import Book, parse_mentions, write
 
-def put(*args):
-    print(",".join(str(arg).replace(',', '') for arg in args))
+
+def get_entries(books):
+    return [dict(
+        id=books[bid]['book_id'],
+        title=books[bid]['title'],
+        topic='',
+        lang='',
+        ref_old='',
+        ref='',
+        bb='',
+    ) for bid in sorted(books.keys())]
 
 
 def main():
@@ -23,10 +33,8 @@ def main():
 
         books[int(m['book_id'])] = m
 
-    put('id', 'title', 'lid', 'pos', 'topic', 'lang')
-    for bid in sorted(books.keys()):
-        m = books[bid]
-        put(m['book_id'], m['title'], m['list_id'], m['pos'], '', '')
+    header = ('id', 'title', 'topic', 'lang', 'ref_old', 'ref', 'bb')
+    write(get_entries(), args.output, header=header, format=args.format)
 
 
 if __name__ == '__main__':
