@@ -4,3 +4,6 @@
 *.log
 *.pdf
 *.tex
+__pycache__
+*.pyc
+*.egg-info
