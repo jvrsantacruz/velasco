@@ -9,6 +9,7 @@ def main():
     parser.add_argument('meta')
     parser.add_argument('bne')
     parser.add_argument('-o', '--output')
+    parser.add_argument('-f', '--format')
     args = parser.parse_args()
 
     left = read(args.meta, types={'id': int})
@@ -22,10 +23,10 @@ def main():
     books = add_lines(books)
     books = add_author(books)
 
-    header = ('id', 'lid', 'pos', 'title', 'author', 'topic', 'lang',
-              'ref_old', 'ref', 'inc', 'bb', 'exists', 'height', 'width',
-              'area', 'vol', 'vols', 'material', 'columns', 'lines')
-    write(list(books), args.output, header=header)
+    header = ('id', 'title', 'author', 'topic', 'lang', 'ref_old', 'ref',
+              'inc', 'bb', 'exists', 'height', 'width', 'area', 'vol', 'vols',
+              'material', 'columns', 'lines')
+    write(list(books), args.output, header=header, format=args.format)
 
     # tamaño
     # volumen
