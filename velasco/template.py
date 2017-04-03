@@ -9,6 +9,8 @@ from parsing import Book, parse_mentions, write
 def get_entries(books):
     return [dict(
         id=books[bid]['book_id'],
+        idx=books[bid]['idx'],
+        short='',
         title=books[bid]['title'],
         topic='',
         lang='',
@@ -31,10 +33,14 @@ def main():
             print('Mention with empty id: {!r}'.format(m), file=sys.stderr)
             continue
 
-        books[int(m['book_id'])] = m
+        if not books.get(int(m['book_id'])):
+            m['idx'] = '{}.{}'.format(m['list_id'], str(m['pos']).zfill(3))
+            books[int(m['book_id'])] = m
+        else:
+            books[int(m['book_id'])]['title'] = m['title']
 
-    header = ('id', 'title', 'topic', 'lang', 'ref_old', 'ref', 'bb')
-    write(get_entries(), args.output, header=header, format=args.format)
+    header = ('id', 'idx', 'short', 'title', 'topic', 'lang', 'ref_old', 'ref', 'bb')
+    write(get_entries(books), args.output, header=header, format=args.format)
 
 
 if __name__ == '__main__':
