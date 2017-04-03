@@ -17,7 +17,7 @@ def table_of_mentions(mentions, meta, header):
             mention['title'].replace(',', ''),
             bmeta['lang'] or 'NA',
             bmeta['topic'] or 'NA',
-            bool(bmeta['exists'])
+            bool(bmeta['ref'] or bmeta['ref_old'])
         )))
 
 
