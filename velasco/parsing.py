@@ -110,11 +110,12 @@ def parse_listing(filename):
 
 def parse_metadata(filename):
     for entry in read(filename):
-        for key in ('id', 'lid', 'pos'):
-            entry[key] = int(entry[key])
-
-        for key in ('bb', 'exists'):
-            entry[key] = str(entry[key]).lower() == 'true'
+        entry['id'] = int(entry['id'])
+        entry['bb'] = str(entry['bb']).lower() != 'false'
+        try:
+            entry['ref'] = int(entry['ref'])
+        except (ValueError, TypeError):
+            pass
 
         yield entry
 
@@ -199,7 +200,8 @@ def write(data, path=None, **kwargs):
 
     :param data: List of dicts to dump
     :param path: Path of the file to write
-    :param header: Lis of headers to get from data (optional)
+    :param header: List of headers to get from data (optional)
+    :param format: Name of the format to use (optional)
     """
     ext = format_name(kwargs.pop('format', None) or detect_format(path))
     return dict(
@@ -262,8 +264,8 @@ def open_file(path, *args, **kwargs):
             yield stream
 
 
-def format_name(ext):
-    ext = FORMAT_ALIASES.get(ext, ext)
+def format_name(ext, default='csv'):
+    ext = FORMAT_ALIASES.get(ext, ext or default)
     if ext not in FORMATS:
         raise ValueError('Unknown format "{}" should be one of {}'
                          .format(ext, ', '.join(FORMATS)))
