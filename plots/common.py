@@ -80,5 +80,6 @@ def categorical_by(df, column, names, fill='NA'):
 
 
 def read_table(path):
-    types = {'bid': int, 'bid': int, 'lid': int, 'year': int, 'pos': int}
+    types = {'bid': int, 'bid': int, 'lid': int, 'year': int, 'pos': int,
+             'area': float, 'height': float}
     return read(path, types=types)

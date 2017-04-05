@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-import sys
 import argparse
 
-from parsing import Book, parse_mentions, parse_metadata, write
+from parsing import Book, parse_mentions, parse_metadata, read, write
 
 
-def table_of_mentions(mentions, meta, header):
+def table_of_mentions(mentions, meta, bne, header):
     for n, mention in enumerate(mentions, 1):
         bmeta = meta[mention['book_id']]
+        bbne = bne[mention['book_id']]
         yield dict(zip(header, (
             n,
             mention['book_id'],
@@ -17,6 +17,8 @@ def table_of_mentions(mentions, meta, header):
             mention['title'].replace(',', ''),
             bmeta['lang'] or 'NA',
             bmeta['topic'] or 'NA',
+            bbne['area'] or 'Nan',
+            bbne['height'] or 'Nan',
             bool(bmeta['ref'] or bmeta['ref_old'])
         )))
 
@@ -25,16 +27,20 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('inventarios')
     parser.add_argument('metadata')
+    parser.add_argument('bne')
     parser.add_argument('-o', '--output')
     parser.add_argument('-f', '--format')
     args = parser.parse_args()
     header = ('mid', 'bid', 'lid', 'year', 'pos', 'title',
-              'lang', 'topic', 'exists')
+              'lang', 'topic', 'area', 'height', 'exists')
 
     meta = parse_metadata(args.metadata)
     meta = {int(m['id']): m for m in meta}
+    bne = read(args.bne)
+    bne = {int(b['id']): b for b in bne}
     mentions = parse_mentions(Book(args.inventarios))
-    table = table_of_mentions(mentions, meta, header)
+
+    table = table_of_mentions(mentions, meta, bne, header)
     write(table, args.output, header=header, format=args.format)
 
 
