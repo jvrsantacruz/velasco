@@ -293,7 +293,7 @@ def read(path, **kwargs):
 
 
 def resume_header(sequence):
-    return sorted(set(k for e in sequence for k in e))
+    return sorted(set(k for e in sequence for k in e if k))
 
 
 def sequence_to_listdict(sequence, header, types=None):
@@ -347,16 +347,19 @@ def merge(left, right, key, right_key=None, header=None,
         right = list(right)
         right_header = resume_header(right)
     if header is None:
-        header = set(left_header) | set(right_header)
+        header = sorted(set(left_header) | set(right_header))
 
     indexed = {entry[right_key]: entry for entry in right}
     for lentry in left:
+        entry = {k: lentry.get(k) for k in left_header}
+
         left_key_value = lentry[left_key]
         rentry = indexed.get(left_key_value, {})
 
-        entry = {k: lentry.get(k) for k in left_header}
-        entry.update(
-            (k, rentry.get(k, rentry.get(k))) for k in right_header
-        )
+        # Override values of left with the ones in right
+        # do not override actual values with empty ones.
+        entry.update({
+            k: rentry.get(k) for k in right_header if not entry.get(k)
+        })
 
         yield {k: entry[k] for k in header}
