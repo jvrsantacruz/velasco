@@ -53,6 +53,12 @@ def main():
     # titulo
     # titulo lomo
 
+def cap_book_sizes(size, max=60):
+    # There is no 1 meter books, most likely
+    # somebody confused millimeters with centimeters
+    # causing me the grief and pain of writing this.
+    return int(size / 10.) if size > max else size
+
 
 def add_height_and_width(books):
     """parse "19 x 20 cm" within descriptions"""
@@ -61,8 +67,8 @@ def add_height_and_width(books):
         book['height'] = book['width'] = book['area'] = ''
         result = size_regex.findall(book.get('descripcion-fisica') or '')
         if result:
-            book['height'] = int(result[0][0])
-            book['width'] = int(result[0][1])
+            book['height'] = cap_book_sizes(int(result[0][0]))
+            book['width'] = cap_book_sizes(int(result[0][1]))
             book['area'] = book['height'] * book['width']
 
         yield book
