@@ -30,6 +30,7 @@ def main():
         df[df.lid == args.second]
     ])
 
+    palette_name = None
     if not args.color_by:
         # Color based on wether theyre in both inventaries or missing
         data['color'] = data.apply(
@@ -38,14 +39,24 @@ def main():
         data['color'] = data.apply(
             lambda row: meta.get_field(args.color_by, *[row[c] for c in columns]), 1)
 
+    # Group numerical values in 5 bins/categories
     if args.color_by in ['area', 'height']:
+        palette_name = 'YlOrRd'
         data['color'] = pd.cut(data['color'], 5)
 
+    # Assure repeteable colors by setting category-color
+    # before lmplot does it randomly on each run
+    values = data['color'].value_counts()
+    colors = sns.color_palette(palette=palette_name, n_colors=len(values))
+    palette = dict(zip(sorted(values.keys()), colors))
+
+    # Use str as column names, otherwise lmplot goes wild
     columns = list(map(str, columns))
     data.columns = columns + ['color']
 
     p = sns.lmplot(*columns, data=data, hue='color',
-                   legend=bool(args.color_by),
+                   legend=True, legend_out=True,
+                   palette=palette,
                    fit_reg=False, size=7, aspect=1.3)
 
     p.set(ylim=(0, None), xlim=(0, None))
@@ -60,7 +71,7 @@ def main():
             )
             for first, second, color in data.values
         ]
-        #for first, second, na in data.values:
+        # for first, second, na in data.values:
         #    # plt.annotate(
         #    #     meta.get(first, second)['short'],
         #    #     #str((first, second)),
