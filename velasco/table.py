@@ -20,7 +20,9 @@ def table_of_mentions(mentions, meta, bne, header):
             bmeta['topic'] or 'NA',
             bbne['area'] or 'Nan',
             bbne['height'] or 'Nan',
-            bool(bmeta['ref'] or bmeta['ref_old'])
+            bool(bmeta['ref'] or bmeta['ref_old']),
+            bbne['material'] or 'NA',
+            bbne['author'] or 'NA',
         )))
 
 
@@ -32,8 +34,8 @@ def main():
     parser.add_argument('-o', '--output')
     parser.add_argument('-f', '--format')
     args = parser.parse_args()
-    header = ('mid', 'bid', 'lid', 'year', 'pos', 'short', 'title',
-              'lang', 'topic', 'area', 'height', 'exists')
+    header = ('mid', 'bid', 'lid', 'year', 'pos', 'short', 'title', 'lang',
+              'topic', 'area', 'height', 'exists', 'material', 'author')
 
     meta = parse_metadata(args.metadata)
     meta = {int(m['id']): m for m in meta}

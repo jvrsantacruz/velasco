@@ -61,6 +61,12 @@ def cap_book_sizes(size, max=60):
     return int(size / 10.) if size > max else size
 
 
+def size_group(size, groups=tuple(range(5, 101, 5))):
+    """Return closest size group"""
+    distances = [abs(size - group) for group in groups]
+    return groups[distances.index(min(distances))]
+
+
 def add_height_and_width(books):
     """parse "19 x 20 cm" within descriptions"""
     size_regex = re.compile('(\d+)\s*x\s*(\d+)\s*cm')
@@ -71,6 +77,8 @@ def add_height_and_width(books):
             book['height'] = cap_book_sizes(int(result[0][0]))
             book['width'] = cap_book_sizes(int(result[0][1]))
             book['area'] = book['height'] * book['width']
+            # book['height_group'] = size_group(book['height'])
+            # book['area_group'] = size_group(book['area'])
 
         yield book
 
