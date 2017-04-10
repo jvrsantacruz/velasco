@@ -39,6 +39,7 @@ def find_repes(sequence, field):
 
 def find_meta_problems(meta):
     meta = list(meta)
+    yield from find_repes(meta, 'short')
     yield from find_repes(meta, 'ref')
     yield from find_repes(meta, 'ref_old')
     yield from find_repes(meta, 'id')

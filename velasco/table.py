@@ -14,6 +14,7 @@ def table_of_mentions(mentions, meta, bne, header):
             mention['list_id'],
             mention['year'],
             mention['pos'],
+            bmeta['short'],
             mention['title'].replace(',', ''),
             bmeta['lang'] or 'NA',
             bmeta['topic'] or 'NA',
@@ -31,7 +32,7 @@ def main():
     parser.add_argument('-o', '--output')
     parser.add_argument('-f', '--format')
     args = parser.parse_args()
-    header = ('mid', 'bid', 'lid', 'year', 'pos', 'title',
+    header = ('mid', 'bid', 'lid', 'year', 'pos', 'short', 'title',
               'lang', 'topic', 'area', 'height', 'exists')
 
     meta = parse_metadata(args.metadata)
