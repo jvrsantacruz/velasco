@@ -18,8 +18,7 @@ def main():
 
     title = 'Altura de libro por inventario y posición'
 
-    plots = df.height\
-        .plot(kind='bar', subplots=True, title=title, grid=True)
+    plots = df.height.plot(kind='bar', subplots=True, title=title, grid=True)
 
     for plot in plots:
         plot.set_title('')

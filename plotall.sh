@@ -11,9 +11,19 @@ declare -r BNE_TABLE="$DIR/bne.csv"
 declare -r NTASKS=8
 
 
+function plot_with_args {
+    local script=$1
+    shift
+    local args="$@"
+
+    python plots/${script}.py $TABLE $args \
+        --save --output $DIR --ext png --dpi 200
+}
+
+
 function plot_simple {
     local name=$1
-    python plots/${name}.py $TABLE --save --output $DIR --ext png --dpi 200 &
+    python plots/${name}.py $TABLE --save --output $DIR --ext png --dpi 200
 }
 
 
@@ -51,6 +61,7 @@ function wait_some {
     done
 }
 
+
 function wait_all {
     for pid in $(jobs -p); do wait $pid; done
 }
@@ -60,8 +71,12 @@ mkdir -p $DIR
 python velasco/bne.py "$METADATA" "$BNE" --output $BNE_TABLE
 python velasco/table.py "$INVENTARIOS" "$METADATA" "$BNE_TABLE" --output $TABLE
 
-for name in todos tema idioma orden orden_uno fantasmas area height; do
-    plot_simple "$name" &
+for script in height_line; do
+    plot_with_args "$script" &
+done
+
+for name in $(python plots/squares.py --list $TABLE); do
+    plot_with_args "squares" --color-by "$name" --name "squares_$name"  &
 done
 wait_some
 
