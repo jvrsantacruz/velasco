@@ -7,6 +7,14 @@ from adjustText import adjust_text
 from common import get_parser, get_args, plotting, read_table
 
 
+variable_names = {
+    'height': 'altura',
+    'topic': 'tema',
+    'lang': 'idioma',
+    'author': 'autor',
+}
+
+
 def main():
     parser = get_parser()
     parser.add_argument('--first', default=3, type=int)
@@ -31,21 +39,25 @@ def main():
     ])
 
     palette_name = None
+    title = 'Orden/Orden inventarios {} y {}'\
+        .format(args.first, args.second)
     if not args.color_by:
         # Color based on wether theyre in both inventaries or missing
         data['color'] = data.apply(
             lambda row: any(not row[c] for c in columns), 1)
     else:
+        variable_name = variable_names.get(args.color_by, args.color_by)
+        title += ' variable "{}"'.format(variable_name)
         data['color'] = data.apply(
             lambda row: meta.get_field(args.color_by, *[row[c] for c in columns]), 1)
 
     # Group numerical values in 5 bins/categories
     if args.color_by in ['area', 'height']:
-        palette_name = 'YlOrRd'
-        data['color'] = pd.cut(data['color'], 5)
+        palette_name = 'YlOrRd'  # yellow to red
+        data['color'] = pd.cut(data['color'], 10)
 
-    # Assure repeteable colors by setting category-color
-    # before lmplot does it randomly on each run
+    # Assure repeteable colors by setting category-color map
+    # before lmplot does it randomly on each run and confuse us
     values = data['color'].value_counts()
     colors = sns.color_palette(palette=palette_name, n_colors=len(values))
     palette = dict(zip(sorted(values.keys()), colors))
@@ -55,11 +67,22 @@ def main():
     data.columns = columns + ['color']
 
     p = sns.lmplot(*columns, data=data, hue='color',
-                   legend=True, legend_out=True,
                    palette=palette,
+                   legend=False, legend_out=True,
                    fit_reg=False, size=7, aspect=1.3)
 
+    # Set top title and space for it
+    sns.plt.suptitle(title)
+    p.fig.subplots_adjust(top=0.92)
+
     p.set(ylim=(0, None), xlim=(0, None))
+
+    # Set legend outside graph at center right
+    if args.color_by:
+        p.fig.subplots_adjust(right=0.85)
+        variable_name = variable_names.get(args.color_by, args.color_by)
+        plt.legend(bbox_to_anchor=(1.18, 0.7), borderaxespad=0.,
+                   title=variable_name.title())
 
     if args.annotated:
         texts = [
