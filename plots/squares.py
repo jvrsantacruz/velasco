@@ -104,6 +104,12 @@ def height_config(df, key):
     return data, [], colors
 
 
+def author_config(df, key):
+    data = df.pivot(index='bid', columns='lid', values='author').fillna('NA')
+    colors = sns.light_palette('red', len(data))
+    return data, [], colors
+
+
 configs = {
     'height': height_config,
     'lang': lang_config,

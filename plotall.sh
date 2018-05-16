@@ -56,7 +56,7 @@ function plot_orden {
 
 
 function wait_some {
-    while test "$(jbos -p | wc -l)" -gt $NTASKS; do
+    while test "$(jobs -p | wc -l)" -gt $NTASKS; do
         wait "$(jobs -p | head -n 1)"  || true
     done
 }

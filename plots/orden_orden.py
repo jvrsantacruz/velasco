@@ -8,7 +8,8 @@ from common import get_parser, get_args, plotting, read_table
 
 
 variable_names = {
-    'height': 'altura',
+    'height': 'altura (cm)',
+    'area': 'area (cm²)',
     'topic': 'tema',
     'lang': 'idioma',
     'author': 'autor',
@@ -52,15 +53,19 @@ def main():
             lambda row: meta.get_field(args.color_by, *[row[c] for c in columns]), 1)
 
     # Group numerical values in 5 bins/categories
+    color_sorter = None
     if args.color_by in ['area', 'height']:
         palette_name = 'YlOrRd'  # yellow to red
-        data['color'] = pd.cut(data['color'], 10)
+        bins = 10 if args.color_by == 'height' else 5
+        data['color'] = pd.cut(data['color'], bins, precision=0)
+        def color_sorter(e):
+            return float(str(e).strip('(').strip(']').split(', ', 1)[0])
 
     # Assure repeteable colors by setting category-color map
     # before lmplot does it randomly on each run and confuse us
-    values = data['color'].value_counts()
+    values = sorted(data['color'].unique(), key=color_sorter)
     colors = sns.color_palette(palette=palette_name, n_colors=len(values))
-    palette = dict(zip(sorted(values.keys()), colors))
+    palette = dict(zip(values, colors))
 
     # Use str as column names, otherwise lmplot goes wild
     columns = list(map(str, columns))
@@ -82,7 +87,7 @@ def main():
         p.fig.subplots_adjust(right=0.85)
         variable_name = variable_names.get(args.color_by, args.color_by)
         plt.legend(bbox_to_anchor=(1.18, 0.7), borderaxespad=0.,
-                   title=variable_name.title())
+                   title=variable_name)
 
     if args.annotated:
         texts = [
