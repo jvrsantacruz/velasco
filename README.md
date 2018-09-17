@@ -61,3 +61,7 @@ O manualmente desde el directorio del proyecto bne/bne:
     scrapy runspider spiders/catalogo.py -a metadata_path="/path/to/metadata"
 
 El resultado quedará en un fichero llamado *records.jl*.
+
+# Dependencias
+
+sudo apt-get install python3-tk

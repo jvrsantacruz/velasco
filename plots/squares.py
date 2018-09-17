@@ -6,7 +6,7 @@ from matplotlib.colors import ListedColormap
 
 from velasco.parsing import read
 from common import (get_args, plotting, categorical_by, legend, set_axis,
-                    read_table, get_parser)
+                    read_table, get_parser, as_letters)
 
 
 def topic_config(df, key):
@@ -156,7 +156,7 @@ def plot(args):
         cbar=False
     )
 
-    set_axis(ax, data, set(df.year.values), ylabel='Posición')
+    set_axis(ax, data, as_letters(set(df.year.values)), ylabel='Posición')
     legend(f, ax, labels, colors)
 
     if args.annotated and args.color_by in ['bid', 'year']:

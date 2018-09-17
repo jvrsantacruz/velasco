@@ -32,8 +32,8 @@ def main():
     parser.add_argument('-f', '--format')
     args = parser.parse_args()
 
-    inventario = {r['ID']: r for r in read(args.inventario, types={'ID', int})}
-    metadata = {r['id']: r for r in read(args.metadata, types={'id', int})}
+    inventario = {r['ID']: r for r in read(args.inventario, types={'ID': int})}
+    metadata = {r['id']: r for r in read(args.metadata, types={'id': int})}
 
     for bid in metadata:
         metadata[bid]['ref_old'] = old = get(inventario, bid, 'SIGNATURA ANTIGUA')

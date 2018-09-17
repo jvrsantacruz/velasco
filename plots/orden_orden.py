@@ -1,10 +1,10 @@
 import pandas as pd
-import seaborn as sns
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 from adjustText import adjust_text
 
-from common import get_parser, get_args, plotting, read_table
+from common import get_parser, get_args, plotting, read_table, to_letter
 
 
 variable_names = {
@@ -41,7 +41,7 @@ def main():
 
     palette_name = None
     title = 'Orden/Orden inventarios {} y {}'\
-        .format(args.first, args.second)
+        .format(to_letter(args.first), to_letter(args.second))
     if not args.color_by:
         # Color based on wether theyre in both inventaries or missing
         data['color'] = data.apply(
@@ -58,6 +58,7 @@ def main():
         palette_name = 'YlOrRd'  # yellow to red
         bins = 10 if args.color_by == 'height' else 5
         data['color'] = pd.cut(data['color'], bins, precision=0)
+
         def color_sorter(e):
             return float(str(e).strip('(').strip(']').split(', ', 1)[0])
 
@@ -77,7 +78,7 @@ def main():
                    fit_reg=False, size=7, aspect=1.3)
 
     # Set top title and space for it
-    sns.plt.suptitle(title)
+    plt.suptitle(title)
     p.fig.subplots_adjust(top=0.92)
 
     p.set(ylim=(0, None), xlim=(0, None))

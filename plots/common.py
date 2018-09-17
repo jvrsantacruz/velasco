@@ -15,6 +15,15 @@ def uniquename(name, ext, path):
     return 'fig_' + name + '_' + str(number + 1) + '.' + ext
 
 
+def as_letters(collection):
+    return [to_letter(i) for i in range(1, len(collection) + 1)]
+
+
+def to_letter(number):
+    offset = 0 if number <= 0 else number - 1
+    return chr(ord('A') + offset)
+
+
 def get_parser():
     return argparse.ArgumentParser()
 
@@ -35,11 +44,11 @@ def set_axis(ax, data, years, ylabel=''):
     ax.set_xlabel('')
     ax.set_title('')
     ax.set_yticks(range(1, len(data) + 1))
-    ax.set_yticklabels(reversed(list(
-        str(n) if n == 1 or n % 10 == 0 or n == len(data) else ''
+    ax.set_yticklabels(list(
+        str(n) if n == 1 or n % 5 == 0 or n == len(data) else ''
         for n in range(1, len(data) + 1)
-    )), rotation=0, size=8)
-    ax.set_xticklabels(map(str, sorted(set(years))), rotation=-75, size=8)
+    ), rotation=0, size=4)
+    ax.set_xticklabels(map(str, sorted(set(years))), size=7)
 
     # White lines
     [ax.axvline(i, linewidth=5.2, color="white") for i in range(7)]

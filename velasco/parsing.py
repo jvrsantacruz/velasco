@@ -232,7 +232,7 @@ def write_xlsx(data, path=None, header=None):
 def write_csv(data, path, header=None):
     header = resume_header(data) if header is None else header
     with open_file(path, 'w') as stream:
-        writer = csv.writer(stream)
+        writer = csv.writer(stream, quoting=csv.QUOTE_NONNUMERIC)
         writer.writerow(header)
         for entry in data:
             writer.writerow(entry.get(k) for k in header)

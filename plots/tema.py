@@ -6,7 +6,7 @@ from matplotlib.colors import ListedColormap
 
 from velasco.parsing import read
 from common import (get_args, plotting, categorical_by, legend, set_axis,
-                    read_table)
+                    read_table, as_letters)
 
 
 def main():
@@ -32,7 +32,7 @@ def main():
         cbar=False
     )
 
-    set_axis(ax, data, set(df.year.values), ylabel='Posición')
+    set_axis(ax, data, as_letters(df.year.values), ylabel='Posición')
     legend(f, ax, labels, colors)
     plotting(plt, args)
 

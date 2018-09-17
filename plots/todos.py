@@ -3,7 +3,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 
-from common import get_args, plotting, set_axis, read_table
+from common import get_args, plotting, set_axis, read_table, as_letters
 
 
 def main():
@@ -30,7 +30,7 @@ def main():
         cbar=False
     )
 
-    set_axis(ax, data, set(df.year.values), 'Libros')
+    set_axis(ax, data, as_letters(set(df.year.values)), 'Libros')
     plotting(plt, args)
 
 

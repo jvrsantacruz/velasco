@@ -5,7 +5,7 @@ declare -r METADATA="$2"
 declare -r BNE="$3"
 declare -r NAME="graficas"
 declare -r DATE=$(date +"%Y-%m-%d_%H-%M-%S")
-declare -r DIR="$NAME-$DATE"
+declare -r DIR="${4:-"$NAME-$DATE"}"
 declare -r TABLE="$DIR/table.csv"
 declare -r BNE_TABLE="$DIR/bne.csv"
 declare -r NTASKS=8
@@ -16,14 +16,10 @@ function plot_with_args {
     shift
     local args="$@"
 
+    set -x
     python plots/${script}.py $TABLE $args \
         --save --output $DIR --ext png --dpi 200
-}
-
-
-function plot_simple {
-    local name=$1
-    python plots/${name}.py $TABLE --save --output $DIR --ext png --dpi 200
+    set +x
 }
 
 
